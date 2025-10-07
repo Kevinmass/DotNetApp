@@ -13,6 +13,5 @@ public class ApplicationDbContext : IdentityDbContext
     }
 
     public DbSet<Post> Posts { get; set; }
-    public DbSet<Category> Categories { get; set; }
     public DbSet<Like> Likes { get; set; }
 }

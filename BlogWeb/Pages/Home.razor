@@ -29,10 +29,6 @@ else
                 <div class="card-body">
                     <div class="d-flex justify-content-between align-items-start">
                         <h5 class="card-title">@post.Title</h5>
-                        @if (post.Category != null)
-                        {
-                            <span class="badge bg-secondary">@post.Category.Name</span>
-                        }
                     </div>
                     <p class="card-text">@post.Content</p>
                     <div class="d-flex justify-content-between align-items-center">
@@ -140,8 +136,6 @@ else
         public DateTime? UpdatedAt { get; set; }
         public string? AuthorId { get; set; }
         public User? Author { get; set; }
-        public int? CategoryId { get; set; }
-        public Category? Category { get; set; }
         public List<Like> Likes { get; set; } = new();
         public int LikesCount => Likes.Count;
     }
@@ -151,14 +145,6 @@ else
         public string? Id { get; set; }
         public string? Email { get; set; }
         public string? UserName { get; set; }
-    }
-
-    public class Category
-    {
-        public int Id { get; set; }
-        public string Name { get; set; } = "";
-        public string? Description { get; set; }
-        public DateTime CreatedAt { get; set; }
     }
 
     public class Like

@@ -14,10 +14,6 @@ public class Post
     public string? AuthorId { get; set; }
     public IdentityUser? Author { get; set; }
 
-    // Category relationship
-    public int? CategoryId { get; set; }
-    public Category? Category { get; set; }
-
     // Likes relationship (computed count)
     public ICollection<Like> Likes { get; set; } = new List<Like>();
     public int LikesCount => Likes.Count;

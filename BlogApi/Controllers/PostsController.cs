@@ -21,13 +21,34 @@ public class PostsController : ControllerBase
 
     // GET: api/posts
     [HttpGet]
-    public async Task<ActionResult<IEnumerable<Post>>> GetPosts([FromQuery] string? search = null, [FromQuery] int? categoryId = null)
+    public async Task<ActionResult<IEnumerable<Post>>> GetPosts([FromQuery] string? search = null)
     {
         try
         {
+            // Clean up posts with invalid AuthorId
+            var postsWithInvalidAuthors = _context.Posts.Where(p => p.AuthorId != null && !_context.Users.Any(u => u.Id == p.AuthorId));
+            if (await postsWithInvalidAuthors.AnyAsync())
+            {
+                _context.Posts.RemoveRange(await postsWithInvalidAuthors.ToListAsync());
+                await _context.SaveChangesAsync();
+            }
+
+            // Clean up likes with invalid PostId or UserId
+            var likesWithInvalidPosts = _context.Likes.Where(l => !_context.Posts.Any(p => p.Id == l.PostId));
+            if (await likesWithInvalidPosts.AnyAsync())
+            {
+                _context.Likes.RemoveRange(await likesWithInvalidPosts.ToListAsync());
+                await _context.SaveChangesAsync();
+            }
+            var likesWithInvalidUsers = _context.Likes.Where(l => !_context.Users.Any(u => u.Id == l.UserId));
+            if (await likesWithInvalidUsers.AnyAsync())
+            {
+                _context.Likes.RemoveRange(await likesWithInvalidUsers.ToListAsync());
+                await _context.SaveChangesAsync();
+            }
+
             var query = _context.Posts
                 .Include(p => p.Author)
-                .Include(p => p.Category)
                 .Include(p => p.Likes) as IQueryable<Post>;
 
             if (!string.IsNullOrWhiteSpace(search))
@@ -35,15 +56,11 @@ public class PostsController : ControllerBase
                 query = query.Where(p => p.Title.Contains(search) || p.Content.Contains(search));
             }
 
-            if (categoryId.HasValue)
-            {
-                query = query.Where(p => p.CategoryId == categoryId);
-            }
-
             return await query.OrderByDescending(p => p.CreatedAt).ToListAsync();
         }
         catch (Exception ex)
         {
+            Console.WriteLine($"Exception in GetPosts: {ex.ToString()}");
             return StatusCode(500, $"Internal server error: {ex.Message}, Inner: {ex.InnerException?.Message}");
         }
     }
@@ -54,7 +71,6 @@ public class PostsController : ControllerBase
     {
         var post = await _context.Posts
             .Include(p => p.Author)
-            .Include(p => p.Category)
             .Include(p => p.Likes)
             .FirstOrDefaultAsync(p => p.Id == id);
 
@@ -95,13 +111,6 @@ public class PostsController : ControllerBase
         if (post.Content.Length > 5000)
             return BadRequest("Content cannot exceed 5000 characters");
 
-        if (post.CategoryId.HasValue)
-        {
-            var categoryExists = await _context.Categories.AnyAsync(c => c.Id == post.CategoryId);
-            if (!categoryExists)
-                return BadRequest("Specified category does not exist");
-        }
-
         post.AuthorId = userId;
         post.CreatedAt = DateTime.UtcNow;
         post.UpdatedAt = null;
@@ -123,6 +132,24 @@ public class PostsController : ControllerBase
         {
             return BadRequest();
         }
+
+        if (string.IsNullOrWhiteSpace(post.Title))
+            return BadRequest("Title cannot be null or empty");
+
+        if (post.Title.Length < 3)
+            return BadRequest("Title must be at least 3 characters long");
+
+        if (post.Title.Length > 100)
+            return BadRequest("Title cannot exceed 100 characters");
+
+        if (string.IsNullOrWhiteSpace(post.Content))
+            return BadRequest("Content cannot be null or empty");
+
+        if (post.Content.Length < 10)
+            return BadRequest("Content must be at least 10 characters long");
+
+        if (post.Content.Length > 5000)
+            return BadRequest("Content cannot exceed 5000 characters");
 
         post.UpdatedAt = DateTime.UtcNow;
         _context.Entry(post).State = EntityState.Modified;
