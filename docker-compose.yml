@@ -1,0 +1,28 @@
+version: '3.8'
+
+services:
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile.api
+    container_name: blog-api
+    ports:
+      - "5001:80"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://+:80
+    volumes:
+      - blogdb:/tmp/blog.db
+
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile.web
+    container_name: blog-web
+    ports:
+      - "3000:80"
+    depends_on:
+      - api
+
+volumes:
+  blogdb:

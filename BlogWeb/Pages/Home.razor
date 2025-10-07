@@ -1,0 +1,70 @@
+﻿@page "/"
+@inject HttpClient Http
+
+<PageTitle>Blog</PageTitle>
+
+<h1>Blog Posts</h1>
+
+@if (posts == null)
+{
+    <p>Loading...</p>
+}
+else
+{
+    <a href="/post/new" class="btn btn-primary mb-3">Create New Post</a>
+    if (!posts.Any())
+    {
+        <p>No posts yet.</p>
+    }
+    else
+    {
+        foreach (var post in posts)
+        {
+            <div class="card mb-3">
+                <div class="card-body">
+                    <h5 class="card-title">@post.Title</h5>
+                    <p class="card-text">@post.Content</p>
+                    <small class="text-muted">Created: @post.CreatedAt.ToLocalTime()</small>
+                    <div class="mt-2">
+                        <a href="/post/edit/@post.Id" class="btn btn-secondary btn-sm">Edit</a>
+                        <button @onclick="() => DeletePost(post.Id)" class="btn btn-danger btn-sm">Delete</button>
+                    </div>
+                </div>
+            </div>
+        }
+    }
+}
+
+@code {
+    private List<Post>? posts;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadPosts();
+    }
+
+    private async Task LoadPosts()
+    {
+        posts = await Http.GetFromJsonAsync<List<Post>>("api/posts");
+    }
+
+    private async Task DeletePost(int id)
+    {
+        if (posts == null) return;
+        var response = await Http.DeleteAsync($"api/posts/{id}");
+        if (response.IsSuccessStatusCode)
+        {
+            posts.RemoveAll(p => p.Id == id);
+            StateHasChanged();
+        }
+    }
+
+    public class Post
+    {
+        public int Id { get; set; }
+        public string Title { get; set; } = "";
+        public string Content { get; set; } = "";
+        public DateTime CreatedAt { get; set; }
+        public DateTime? UpdatedAt { get; set; }
+    }
+}
