@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "zx3IJF2JfT8=",
+  "dgSpecHash": "aldQq4DGoTo=",
   "success": true,
-  "projectFilePath": "C:\\Users\\kevin\\OneDrive\\Desktop\\Clases\\IS3\\APP-WEB\\BlogWeb\\BlogWeb.csproj",
+  "projectFilePath": "C:\\Users\\kevin\\OneDrive\\Desktop\\Clases\\IS3\\API-BLOG\\BlogWeb\\BlogWeb.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\kevin\\.nuget\\packages\\microsoft.aspnetcore.authorization\\8.0.20\\microsoft.aspnetcore.authorization.8.0.20.nupkg.sha512",
     "C:\\Users\\kevin\\.nuget\\packages\\microsoft.aspnetcore.components\\8.0.20\\microsoft.aspnetcore.components.8.0.20.nupkg.sha512",

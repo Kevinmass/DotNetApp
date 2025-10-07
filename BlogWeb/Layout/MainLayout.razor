@@ -1,12 +1,30 @@
 ﻿@inherits LayoutComponentBase
+@inject IJSRuntime JSRuntime
+@inject HttpClient Http
+@inject NavigationManager Navigation
+
 <div class="page">
     <div class="sidebar">
         <NavMenu />
     </div>
 
     <main>
-        <div class="top-row px-4">
-            <a href="https://learn.microsoft.com/aspnet/core/" target="_blank">About</a>
+        <div class="top-row px-4 d-flex justify-content-between align-items-center">
+            <div>
+                <a href="/" class="btn btn-link">Blog Home</a>
+            </div>
+            <div>
+                @if (!isAuthenticated)
+                {
+                    <a href="/auth/login" class="btn btn-outline-primary me-2">Login</a>
+                    <a href="/auth/register" class="btn btn-primary">Register</a>
+                }
+                else
+                {
+                    <span class="me-3">Welcome, @currentUserName!</span>
+                    <button @onclick="Logout" class="btn btn-outline-secondary">Logout</button>
+                }
+            </div>
         </div>
 
         <article class="content px-4">
@@ -14,3 +32,89 @@
         </article>
     </main>
 </div>
+
+@code {
+    private bool isAuthenticated = false;
+    private string? currentUserName;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await CheckAuthentication();
+    }
+
+    private async Task CheckAuthentication()
+    {
+        var token = await GetTokenAsync();
+        if (!string.IsNullOrEmpty(token))
+        {
+            Http.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
+            isAuthenticated = true;
+
+            // Get current user info (simplified - could store user data in localStorage)
+            try
+            {
+                var userResponse = await Http.GetAsync("api/auth/me");
+                if (userResponse.IsSuccessStatusCode)
+                {
+                    var user = await userResponse.Content.ReadFromJsonAsync<User>();
+                    currentUserName = user?.UserName ?? user?.Email;
+                }
+            }
+            catch
+            {
+                // Ignore errors, user will need to login again
+            }
+        }
+        else
+        {
+            isAuthenticated = false;
+            currentUserName = null;
+        }
+
+        StateHasChanged();
+    }
+
+    private async Task Logout()
+    {
+        try
+        {
+            await Http.PostAsync("api/auth/logout", null);
+        }
+        catch
+        {
+            // Ignore logout errors
+        }
+
+        // Clear localStorage and reset state
+        await JSRuntime.InvokeVoidAsync("localStorage.removeItem", "authToken");
+        isAuthenticated = false;
+        currentUserName = null;
+
+        // Clear auth header
+        if (Http.DefaultRequestHeaders.Contains("Authorization"))
+        {
+            Http.DefaultRequestHeaders.Remove("Authorization");
+        }
+
+        Navigation.NavigateTo("/", true);
+    }
+
+    private async Task<string?> GetTokenAsync()
+    {
+        try
+        {
+            return await JSRuntime.InvokeAsync<string>("localStorage.getItem", "authToken");
+        }
+        catch
+        {
+            return null;
+        }
+    }
+
+    public class User
+    {
+        public string? Id { get; set; }
+        public string? Email { get; set; }
+        public string? UserName { get; set; }
+    }
+}

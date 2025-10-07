@@ -1,0 +1,134 @@
+@page "/auth/register"
+@inject HttpClient Http
+@inject NavigationManager Navigation
+@inject IJSRuntime JSRuntime
+
+<PageTitle>Register</PageTitle>
+
+<h1>Register</h1>
+
+@if (isLoading)
+{
+    <p>Loading...</p>
+}
+else
+{
+    <div class="row">
+        <div class="col-md-6">
+            <EditForm Model="registerRequest" OnValidSubmit="HandleRegister">
+                <DataAnnotationsValidator />
+                <ValidationSummary />
+
+                <div class="form-group">
+                    <label for="username">Username</label>
+                    <InputText id="username" class="form-control" @bind-Value="registerRequest.UserName" />
+                    <small class="form-text text-muted">
+                        2-50 characters, letters and digits only.
+                    </small>
+                </div>
+
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <InputText id="password" class="form-control" type="password" @bind-Value="registerRequest.Password" />
+                    <small class="form-text text-muted">
+                        3-100 characters, must include uppercase, lowercase, digit, and special character.
+                    </small>
+                </div>
+
+                <button type="submit" class="btn btn-primary" disabled="@isLoading">
+                    @if (isLoading) { <span>Loading...</span> } else { <span>Register</span> }
+                </button>
+            </EditForm>
+
+            <p class="mt-3">
+                Already have an account? <a href="/auth/login">Login here</a>
+            </p>
+            <p>
+                <a href="/">Back to Blog</a>
+            </p>
+        </div>
+    </div>
+}
+
+@if (errorMessage != null)
+{
+    <div class="alert alert-danger mt-3">
+        @errorMessage
+    </div>
+}
+
+@if (successMessage != null)
+{
+    <div class="alert alert-success mt-3">
+        @successMessage
+    </div>
+}
+
+@code {
+    private RegisterRequest registerRequest = new();
+    private bool isLoading = false;
+    private string? errorMessage;
+    private string? successMessage;
+
+    private async Task HandleRegister()
+    {
+        isLoading = true;
+        errorMessage = null;
+        successMessage = null;
+
+        try
+        {
+            var response = await Http.PostAsJsonAsync("api/auth/register", registerRequest);
+
+            if (response.IsSuccessStatusCode)
+            {
+                var result = await response.Content.ReadFromJsonAsync<AuthResponse>();
+                if (result != null)
+                {
+                    // Store token in localStorage
+                    await JSRuntime.InvokeVoidAsync("localStorage.setItem", "authToken", result.Token);
+                    successMessage = "Registration successful! Redirecting...";
+                    await Task.Delay(2000); // Show success message briefly
+                    Navigation.NavigateTo("/", forceLoad: true);
+                }
+                else
+                {
+                    errorMessage = "Registration failed: Invalid response format";
+                }
+            }
+            else
+            {
+                var error = await response.Content.ReadAsStringAsync();
+                errorMessage = $"Registration failed: {error}";
+            }
+        }
+        catch (Exception ex)
+        {
+            errorMessage = $"Registration error: {ex.Message}";
+        }
+        finally
+        {
+            isLoading = false;
+            StateHasChanged();
+        }
+    }
+
+    public class RegisterRequest
+    {
+        public string UserName { get; set; } = "";
+        public string Password { get; set; } = "";
+    }
+
+    public class AuthResponse
+    {
+        public string Token { get; set; } = "";
+        public User? User { get; set; }
+    }
+
+    public class User
+    {
+        public string? Id { get; set; }
+        public string? Email { get; set; }
+        public string? UserName { get; set; }
+    }
+}

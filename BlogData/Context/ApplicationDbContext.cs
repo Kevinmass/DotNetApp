@@ -1,9 +1,11 @@
 using BlogData.Models;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
 namespace BlogData.Context;
 
-public class ApplicationDbContext : DbContext
+public class ApplicationDbContext : IdentityDbContext
 {
     public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
         : base(options)
@@ -11,4 +13,6 @@ public class ApplicationDbContext : DbContext
     }
 
     public DbSet<Post> Posts { get; set; }
+    public DbSet<Category> Categories { get; set; }
+    public DbSet<Like> Likes { get; set; }
 }

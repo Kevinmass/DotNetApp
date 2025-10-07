@@ -10,3 +10,16 @@ C:\Users\kevin\OneDrive\Desktop\Clases\IS3\APP-WEB\BlogData\obj\Debug\net8.0\Blo
 C:\Users\kevin\OneDrive\Desktop\Clases\IS3\APP-WEB\BlogData\obj\Debug\net8.0\refint\BlogData.dll
 C:\Users\kevin\OneDrive\Desktop\Clases\IS3\APP-WEB\BlogData\obj\Debug\net8.0\BlogData.pdb
 C:\Users\kevin\OneDrive\Desktop\Clases\IS3\APP-WEB\BlogData\obj\Debug\net8.0\ref\BlogData.dll
+C:\Users\kevin\OneDrive\Desktop\Clases\IS3\API-BLOG\BlogData\bin\Debug\net8.0\BlogData.deps.json
+C:\Users\kevin\OneDrive\Desktop\Clases\IS3\API-BLOG\BlogData\bin\Debug\net8.0\BlogData.dll
+C:\Users\kevin\OneDrive\Desktop\Clases\IS3\API-BLOG\BlogData\bin\Debug\net8.0\BlogData.pdb
+C:\Users\kevin\OneDrive\Desktop\Clases\IS3\API-BLOG\BlogData\obj\Debug\net8.0\BlogData.csproj.AssemblyReference.cache
+C:\Users\kevin\OneDrive\Desktop\Clases\IS3\API-BLOG\BlogData\obj\Debug\net8.0\BlogData.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\kevin\OneDrive\Desktop\Clases\IS3\API-BLOG\BlogData\obj\Debug\net8.0\BlogData.AssemblyInfoInputs.cache
+C:\Users\kevin\OneDrive\Desktop\Clases\IS3\API-BLOG\BlogData\obj\Debug\net8.0\BlogData.AssemblyInfo.cs
+C:\Users\kevin\OneDrive\Desktop\Clases\IS3\API-BLOG\BlogData\obj\Debug\net8.0\BlogData.csproj.CoreCompileInputs.cache
+C:\Users\kevin\OneDrive\Desktop\Clases\IS3\API-BLOG\BlogData\obj\Debug\net8.0\BlogData.sourcelink.json
+C:\Users\kevin\OneDrive\Desktop\Clases\IS3\API-BLOG\BlogData\obj\Debug\net8.0\BlogData.dll
+C:\Users\kevin\OneDrive\Desktop\Clases\IS3\API-BLOG\BlogData\obj\Debug\net8.0\refint\BlogData.dll
+C:\Users\kevin\OneDrive\Desktop\Clases\IS3\API-BLOG\BlogData\obj\Debug\net8.0\BlogData.pdb
+C:\Users\kevin\OneDrive\Desktop\Clases\IS3\API-BLOG\BlogData\obj\Debug\net8.0\ref\BlogData.dll

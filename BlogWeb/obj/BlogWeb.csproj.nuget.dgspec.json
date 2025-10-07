@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\kevin\\OneDrive\\Desktop\\Clases\\IS3\\APP-WEB\\BlogWeb\\BlogWeb.csproj": {}
+    "C:\\Users\\kevin\\OneDrive\\Desktop\\Clases\\IS3\\API-BLOG\\BlogWeb\\BlogWeb.csproj": {}
   },
   "projects": {
-    "C:\\Users\\kevin\\OneDrive\\Desktop\\Clases\\IS3\\APP-WEB\\BlogWeb\\BlogWeb.csproj": {
+    "C:\\Users\\kevin\\OneDrive\\Desktop\\Clases\\IS3\\API-BLOG\\BlogWeb\\BlogWeb.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\kevin\\OneDrive\\Desktop\\Clases\\IS3\\APP-WEB\\BlogWeb\\BlogWeb.csproj",
+        "projectUniqueName": "C:\\Users\\kevin\\OneDrive\\Desktop\\Clases\\IS3\\API-BLOG\\BlogWeb\\BlogWeb.csproj",
         "projectName": "BlogWeb",
-        "projectPath": "C:\\Users\\kevin\\OneDrive\\Desktop\\Clases\\IS3\\APP-WEB\\BlogWeb\\BlogWeb.csproj",
+        "projectPath": "C:\\Users\\kevin\\OneDrive\\Desktop\\Clases\\IS3\\API-BLOG\\BlogWeb\\BlogWeb.csproj",
         "packagesPath": "C:\\Users\\kevin\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\kevin\\OneDrive\\Desktop\\Clases\\IS3\\APP-WEB\\BlogWeb\\obj\\",
+        "outputPath": "C:\\Users\\kevin\\OneDrive\\Desktop\\Clases\\IS3\\API-BLOG\\BlogWeb\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"

@@ -1,5 +1,6 @@
 ﻿@page "/"
 @inject HttpClient Http
+@inject IJSRuntime JSRuntime
 
 <PageTitle>Blog</PageTitle>
 
@@ -11,7 +12,11 @@
 }
 else
 {
-    <a href="/post/new" class="btn btn-primary mb-3">Create New Post</a>
+    @if (isAuthenticated)
+    {
+        <a href="/post/new" class="btn btn-primary mb-3">Create New Post</a>
+    }
+
     if (!posts.Any())
     {
         <p>No posts yet.</p>
@@ -22,12 +27,31 @@ else
         {
             <div class="card mb-3">
                 <div class="card-body">
-                    <h5 class="card-title">@post.Title</h5>
+                    <div class="d-flex justify-content-between align-items-start">
+                        <h5 class="card-title">@post.Title</h5>
+                        @if (post.Category != null)
+                        {
+                            <span class="badge bg-secondary">@post.Category.Name</span>
+                        }
+                    </div>
                     <p class="card-text">@post.Content</p>
-                    <small class="text-muted">Created: @post.CreatedAt.ToLocalTime()</small>
-                    <div class="mt-2">
-                        <a href="/post/edit/@post.Id" class="btn btn-secondary btn-sm">Edit</a>
-                        <button @onclick="() => DeletePost(post.Id)" class="btn btn-danger btn-sm">Delete</button>
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <small class="text-muted">
+                                Created: @post.CreatedAt.ToLocalTime()
+                                @if (post.Author != null)
+                                {
+                                    <span>by @post.Author.UserName</span>
+                                }
+                            </small>
+                        </div>
+                        <div class="text-end">
+                            <button class="btn btn-outline-danger btn-sm me-2" @onclick="() => ToggleLike(post.Id)">
+                                ❤️ @post.LikesCount
+                            </button>
+                            <a href="/post/edit/@post.Id" class="btn btn-secondary btn-sm">Edit</a>
+                            <button @onclick="() => DeletePost(post.Id)" class="btn btn-danger btn-sm ms-1">Delete</button>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -37,15 +61,51 @@ else
 
 @code {
     private List<Post>? posts;
+    private bool isAuthenticated = false;
 
     protected override async Task OnInitializedAsync()
     {
+        await CheckAuthentication();
         await LoadPosts();
     }
 
     private async Task LoadPosts()
     {
         posts = await Http.GetFromJsonAsync<List<Post>>("api/posts");
+    }
+
+    private async Task CheckAuthentication()
+    {
+        var token = await GetTokenAsync();
+        if (!string.IsNullOrEmpty(token))
+        {
+            Http.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
+            isAuthenticated = true;
+        }
+    }
+
+    private async Task ToggleLike(int postId)
+    {
+        if (!isAuthenticated) return;
+
+        try
+        {
+            var response = await Http.DeleteAsync($"api/likes/post/{postId}");
+            if (!response.IsSuccessStatusCode)
+            {
+                // Try to like if unlike failed (maybe not liked yet)
+                response = await Http.PostAsync($"api/likes/post/{postId}", null);
+            }
+
+            if (response.IsSuccessStatusCode)
+            {
+                await LoadPosts(); // Refresh to show updated count
+            }
+        }
+        catch
+        {
+            // Handle error silently for now
+        }
     }
 
     private async Task DeletePost(int id)
@@ -59,6 +119,18 @@ else
         }
     }
 
+    private async Task<string?> GetTokenAsync()
+    {
+        try
+        {
+            return await JSRuntime.InvokeAsync<string>("localStorage.getItem", "authToken");
+        }
+        catch
+        {
+            return null;
+        }
+    }
+
     public class Post
     {
         public int Id { get; set; }
@@ -66,5 +138,35 @@ else
         public string Content { get; set; } = "";
         public DateTime CreatedAt { get; set; }
         public DateTime? UpdatedAt { get; set; }
+        public string? AuthorId { get; set; }
+        public User? Author { get; set; }
+        public int? CategoryId { get; set; }
+        public Category? Category { get; set; }
+        public List<Like> Likes { get; set; } = new();
+        public int LikesCount => Likes.Count;
+    }
+
+    public class User
+    {
+        public string? Id { get; set; }
+        public string? Email { get; set; }
+        public string? UserName { get; set; }
+    }
+
+    public class Category
+    {
+        public int Id { get; set; }
+        public string Name { get; set; } = "";
+        public string? Description { get; set; }
+        public DateTime CreatedAt { get; set; }
+    }
+
+    public class Like
+    {
+        public int Id { get; set; }
+        public int PostId { get; set; }
+        public string UserId { get; set; } = "";
+        public DateTime CreatedAt { get; set; }
+        public User? User { get; set; }
     }
 }

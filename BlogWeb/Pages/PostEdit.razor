@@ -2,37 +2,76 @@
 @page "/post/edit/{id:int}"
 @inject HttpClient Http
 @inject NavigationManager Navigation
+@inject IJSRuntime JSRuntime
 
 <PageTitle>@(post?.Id == 0 ? "Create Post" : "Edit Post")</PageTitle>
 
 <h1>@(post?.Id == 0 ? "Create New Post" : $"Edit Post: {post?.Title}")</h1>
 
-<EditForm Model="post" OnValidSubmit="HandleValidSubmit">
-    <DataAnnotationsValidator />
-    <ValidationSummary />
-
-    <div class="form-group">
-        <label for="title">Title</label>
-        <InputText id="title" class="form-control" @bind-Value="post!.Title" />
+@if (!isAuthenticated)
+{
+    <div class="alert alert-warning">
+        You need to be logged in to create or edit posts.
+        <a href="/auth/login" class="alert-link">Login here</a>
     </div>
+}
+else
+{
+    <EditForm Model="post" OnValidSubmit="HandleValidSubmit">
+        <DataAnnotationsValidator />
+        <ValidationSummary />
 
-    <div class="form-group">
-        <label for="content">Content</label>
-        <InputTextArea id="content" class="form-control" rows="10" @bind-Value="post!.Content" />
-    </div>
+        <div class="form-group">
+            <label for="title">Title</label>
+            <InputText id="title" class="form-control" @bind-Value="post!.Title" />
+            <small class="form-text text-muted">
+                3-100 characters, required.
+            </small>
+        </div>
 
-    <button type="submit" class="btn btn-primary">Save</button>
-    <a href="/" class="btn btn-secondary ml-2">Cancel</a>
-</EditForm>
+        <div class="form-group">
+            <label for="content">Content</label>
+            <InputTextArea id="content" class="form-control" rows="10" @bind-Value="post!.Content" />
+            <small class="form-text text-muted">
+                10-5000 characters, required.
+            </small>
+        </div>
+
+        <div class="form-group">
+            <label for="category">Category (Optional)</label>
+            <InputSelect id="category" class="form-control" @bind-Value="post!.CategoryId">
+                <option value="">No Category</option>
+                @foreach (var category in categories)
+                {
+                    <option value="@category.Id">@category.Name</option>
+                }
+            </InputSelect>
+        </div>
+
+        <button type="submit" class="btn btn-primary">Save</button>
+        <a href="/" class="btn btn-secondary ml-2">Cancel</a>
+    </EditForm>
+}
 
 @code {
     [Parameter]
     public int Id { get; set; }
 
     private Post? post;
+    private List<Category>? categories;
+    private bool isAuthenticated = false;
 
     protected override async Task OnInitializedAsync()
     {
+        await CheckAuthentication();
+        if (!isAuthenticated && Id == 0)
+        {
+            // For new posts, authentication is required
+            return;
+        }
+
+        await LoadCategories();
+
         if (Id > 0)
         {
             post = await Http.GetFromJsonAsync<Post>($"api/posts/{Id}");
@@ -45,6 +84,21 @@
         {
             post = new Post();
         }
+    }
+
+    private async Task CheckAuthentication()
+    {
+        var token = await GetTokenAsync();
+        if (!string.IsNullOrEmpty(token))
+        {
+            Http.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
+            isAuthenticated = true;
+        }
+    }
+
+    private async Task LoadCategories()
+    {
+        categories = await Http.GetFromJsonAsync<List<Category>>("api/categories");
     }
 
     private async Task HandleValidSubmit()
@@ -67,6 +121,18 @@
         }
     }
 
+    private async Task<string?> GetTokenAsync()
+    {
+        try
+        {
+            return await JSRuntime.InvokeAsync<string>("localStorage.getItem", "authToken");
+        }
+        catch
+        {
+            return null;
+        }
+    }
+
     public class Post
     {
         public int Id { get; set; }
@@ -74,5 +140,15 @@
         public string Content { get; set; } = "";
         public DateTime CreatedAt { get; set; }
         public DateTime? UpdatedAt { get; set; }
+        public string AuthorId { get; set; } = "";
+        public int? CategoryId { get; set; }
+    }
+
+    public class Category
+    {
+        public int Id { get; set; }
+        public string Name { get; set; } = "";
+        public string? Description { get; set; }
+        public DateTime CreatedAt { get; set; }
     }
 }

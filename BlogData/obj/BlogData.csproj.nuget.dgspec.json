@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\kevin\\OneDrive\\Desktop\\Clases\\IS3\\APP-WEB\\BlogData\\BlogData.csproj": {}
+    "C:\\Users\\kevin\\OneDrive\\Desktop\\Clases\\IS3\\API-BLOG\\BlogData\\BlogData.csproj": {}
   },
   "projects": {
-    "C:\\Users\\kevin\\OneDrive\\Desktop\\Clases\\IS3\\APP-WEB\\BlogData\\BlogData.csproj": {
+    "C:\\Users\\kevin\\OneDrive\\Desktop\\Clases\\IS3\\API-BLOG\\BlogData\\BlogData.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\kevin\\OneDrive\\Desktop\\Clases\\IS3\\APP-WEB\\BlogData\\BlogData.csproj",
+        "projectUniqueName": "C:\\Users\\kevin\\OneDrive\\Desktop\\Clases\\IS3\\API-BLOG\\BlogData\\BlogData.csproj",
         "projectName": "BlogData",
-        "projectPath": "C:\\Users\\kevin\\OneDrive\\Desktop\\Clases\\IS3\\APP-WEB\\BlogData\\BlogData.csproj",
+        "projectPath": "C:\\Users\\kevin\\OneDrive\\Desktop\\Clases\\IS3\\API-BLOG\\BlogData\\BlogData.csproj",
         "packagesPath": "C:\\Users\\kevin\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\kevin\\OneDrive\\Desktop\\Clases\\IS3\\APP-WEB\\BlogData\\obj\\",
+        "outputPath": "C:\\Users\\kevin\\OneDrive\\Desktop\\Clases\\IS3\\API-BLOG\\BlogData\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
@@ -48,6 +48,10 @@
         "net8.0": {
           "targetAlias": "net8.0",
           "dependencies": {
+            "Microsoft.AspNetCore.Identity.EntityFrameworkCore": {
+              "target": "Package",
+              "version": "[8.0.0, )"
+            },
             "Microsoft.EntityFrameworkCore.Sqlite": {
               "target": "Package",
               "version": "[9.0.9, )"
