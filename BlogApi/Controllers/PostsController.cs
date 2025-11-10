@@ -19,7 +19,11 @@ public class PostsController : ControllerBase
         _context = context;
     }
 
-    // GET: api/posts
+    /// <summary>
+    /// Obtiene una lista de todas las publicaciones, opcionalmente filtradas por un término de búsqueda.
+    /// </summary>
+    /// <param name="search">Término opcional para buscar en el título o contenido de las publicaciones.</param>
+    /// <returns>Una lista de publicaciones ordenadas por fecha de creación descendente.</returns>
     [HttpGet]
     public async Task<ActionResult<IEnumerable<Post>>> GetPosts([FromQuery] string? search = null)
     {
@@ -65,7 +69,11 @@ public class PostsController : ControllerBase
         }
     }
 
-    // GET: api/posts/5
+    /// <summary>
+    /// Obtiene una publicación específica por su ID.
+    /// </summary>
+    /// <param name="id">El ID de la publicación a obtener.</param>
+    /// <returns>La publicación con el ID especificado, incluyendo autor y likes, o NotFound si no existe.</returns>
     [HttpGet("{id}")]
     public async Task<ActionResult<Post>> GetPost(int id)
     {
@@ -82,7 +90,11 @@ public class PostsController : ControllerBase
         return post;
     }
 
-    // POST: api/posts
+    /// <summary>
+    /// Crea una nueva publicación para el usuario autenticado.
+    /// </summary>
+    /// <param name="post">El objeto Post con título y contenido a crear.</param>
+    /// <returns>La publicación creada con autor cargado, o BadRequest/Unauthorized si hay errores de validación.</returns>
     [HttpPost]
     [Authorize]
     public async Task<ActionResult<Post>> CreatePost(Post post)
@@ -124,7 +136,12 @@ public class PostsController : ControllerBase
         return CreatedAtAction(nameof(GetPost), new { id = post.Id }, post);
     }
 
-    // PUT: api/posts/5
+    /// <summary>
+    /// Actualiza una publicación existente con validaciones.
+    /// </summary>
+    /// <param name="id">El ID de la publicación a actualizar.</param>
+    /// <param name="post">El objeto Post con los nuevos datos.</param>
+    /// <returns>NoContent si la actualización es exitosa, BadRequest si hay errores de validación, o NotFound si no existe.</returns>
     [HttpPut("{id}")]
     public async Task<IActionResult> UpdatePost(int id, Post post)
     {
@@ -173,7 +190,11 @@ public class PostsController : ControllerBase
         return NoContent();
     }
 
-    // DELETE: api/posts/5
+    /// <summary>
+    /// Elimina una publicación por su ID.
+    /// </summary>
+    /// <param name="id">El ID de la publicación a eliminar.</param>
+    /// <returns>NoContent si la eliminación es exitosa, o NotFound si no existe.</returns>
     [HttpDelete("{id}")]
     public async Task<IActionResult> DeletePost(int id)
     {
@@ -189,6 +210,11 @@ public class PostsController : ControllerBase
         return NoContent();
     }
 
+    /// <summary>
+    /// Verifica si existe una publicación con el ID especificado.
+    /// </summary>
+    /// <param name="id">El ID de la publicación a verificar.</param>
+    /// <returns>True si la publicación existe, false en caso contrario.</returns>
     private bool PostExists(int id)
     {
         return _context.Posts.Any(e => e.Id == id);

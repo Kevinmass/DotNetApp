@@ -17,14 +17,21 @@ public class CategoriesController : ControllerBase
         _context = context;
     }
 
-    // GET: api/categories
+    /// <summary>
+    /// Obtiene una lista de todas las categorías ordenadas por nombre.
+    /// </summary>
+    /// <returns>Una lista de categorías ordenadas alfabéticamente por nombre.</returns>
     [HttpGet]
     public async Task<ActionResult<IEnumerable<Category>>> GetCategories()
     {
         return await _context.Categories.OrderBy(c => c.Name).ToListAsync();
     }
 
-    // GET: api/categories/5
+    /// <summary>
+    /// Obtiene una categoría específica por su ID.
+    /// </summary>
+    /// <param name="id">El ID de la categoría a obtener.</param>
+    /// <returns>La categoría con el ID especificado, o NotFound si no existe.</returns>
     [HttpGet("{id}")]
     public async Task<ActionResult<Category>> GetCategory(int id)
     {
@@ -38,7 +45,11 @@ public class CategoriesController : ControllerBase
         return category;
     }
 
-    // POST: api/categories
+    /// <summary>
+    /// Crea una nueva categoría con validaciones de nombre y descripción.
+    /// </summary>
+    /// <param name="category">El objeto Category con nombre y descripción opcional a crear.</param>
+    /// <returns>La categoría creada, o BadRequest si hay errores de validación o ya existe una categoría con el mismo nombre.</returns>
     [HttpPost]
     [Authorize]
     public async Task<ActionResult<Category>> CreateCategory(Category category)
@@ -67,7 +78,12 @@ public class CategoriesController : ControllerBase
         return CreatedAtAction(nameof(GetCategory), new { id = category.Id }, category);
     }
 
-    // PUT: api/categories/5
+    /// <summary>
+    /// Actualiza una categoría existente.
+    /// </summary>
+    /// <param name="id">El ID de la categoría a actualizar.</param>
+    /// <param name="category">El objeto Category con los nuevos datos.</param>
+    /// <returns>NoContent si la actualización es exitosa, BadRequest si los IDs no coinciden, o NotFound si no existe.</returns>
     [HttpPut("{id}")]
     [Authorize]
     public async Task<IActionResult> UpdateCategory(int id, Category category)
@@ -98,7 +114,11 @@ public class CategoriesController : ControllerBase
         return NoContent();
     }
 
-    // DELETE: api/categories/5
+    /// <summary>
+    /// Elimina una categoría por su ID.
+    /// </summary>
+    /// <param name="id">El ID de la categoría a eliminar.</param>
+    /// <returns>NoContent si la eliminación es exitosa, o NotFound si no existe.</returns>
     [HttpDelete("{id}")]
     [Authorize]
     public async Task<IActionResult> DeleteCategory(int id)
@@ -115,6 +135,11 @@ public class CategoriesController : ControllerBase
         return NoContent();
     }
 
+    /// <summary>
+    /// Verifica si existe una categoría con el ID especificado.
+    /// </summary>
+    /// <param name="id">El ID de la categoría a verificar.</param>
+    /// <returns>True si la categoría existe, false en caso contrario.</returns>
     private bool CategoryExists(int id)
     {
         return _context.Categories.Any(e => e.Id == id);

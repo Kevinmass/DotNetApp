@@ -31,7 +31,11 @@ public class AuthController : ControllerBase
         _configuration = configuration;
     }
 
-    // POST: api/auth/register
+    /// <summary>
+    /// Registra un nuevo usuario en el sistema con validaciones de nombre de usuario y contraseña.
+    /// </summary>
+    /// <param name="request">Objeto que contiene el nombre de usuario y la contraseña para el registro.</param>
+    /// <returns>Un IActionResult con el token JWT y la información del usuario si el registro es exitoso, o un BadRequest con el mensaje de error si falla.</returns>
     [HttpPost("register")]
     public async Task<IActionResult> Register([FromBody] RegisterRequest request)
     {
@@ -102,7 +106,11 @@ public class AuthController : ControllerBase
         });
     }
 
-    // POST: api/auth/login
+    /// <summary>
+    /// Inicia sesión de un usuario existente y genera un token JWT.
+    /// </summary>
+    /// <param name="request">Objeto que contiene el nombre de usuario y la contraseña para el inicio de sesión.</param>
+    /// <returns>Un IActionResult con el token JWT y la información del usuario si el inicio de sesión es exitoso, o Unauthorized si falla.</returns>
     [HttpPost("login")]
     public async Task<IActionResult> Login([FromBody] LoginRequest request)
     {
@@ -130,7 +138,10 @@ public class AuthController : ControllerBase
         });
     }
 
-    // POST: api/auth/logout
+    /// <summary>
+    /// Cierra la sesión del usuario actual.
+    /// </summary>
+    /// <returns>Un IActionResult con un mensaje de confirmación de cierre de sesión exitoso.</returns>
     [HttpPost("logout")]
     [Authorize]
     public async Task<IActionResult> Logout()
@@ -139,7 +150,10 @@ public class AuthController : ControllerBase
         return Ok(new { Message = "Logged out successfully" });
     }
 
-    // GET: api/auth/me
+    /// <summary>
+    /// Obtiene la información del usuario actualmente autenticado.
+    /// </summary>
+    /// <returns>Un IActionResult con la información del usuario (ID, Email, UserName) si está autenticado, o Unauthorized/NotFound si no.</returns>
     [HttpGet("me")]
     [Authorize]
     public async Task<IActionResult> GetCurrentUser()
@@ -160,6 +174,11 @@ public class AuthController : ControllerBase
         });
     }
 
+    /// <summary>
+    /// Genera un token JWT para el usuario especificado.
+    /// </summary>
+    /// <param name="user">El usuario para el cual generar el token.</param>
+    /// <returns>Una cadena que representa el token JWT generado.</returns>
     private async Task<string> GenerateJwtToken(IdentityUser user)
     {
         var jwtSettings = _configuration.GetSection("JwtSettings");

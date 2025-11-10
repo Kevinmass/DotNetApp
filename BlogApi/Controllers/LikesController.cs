@@ -18,7 +18,11 @@ public class LikesController : ControllerBase
         _context = context;
     }
 
-    // GET: api/likes/post/5 - Get likes for a specific post
+    /// <summary>
+    /// Obtiene una lista de likes para una publicación específica.
+    /// </summary>
+    /// <param name="postId">El ID de la publicación para la cual obtener los likes.</param>
+    /// <returns>Una lista de likes con información del usuario que dio like.</returns>
     [HttpGet("post/{postId}")]
     public async Task<ActionResult<IEnumerable<Like>>> GetLikesForPost(int postId)
     {
@@ -30,7 +34,11 @@ public class LikesController : ControllerBase
         return likes;
     }
 
-    // POST: api/likes/post/5 - Like a post
+    /// <summary>
+    /// Da like a una publicación específica.
+    /// </summary>
+    /// <param name="postId">El ID de la publicación a la cual dar like.</param>
+    /// <returns>Ok con mensaje de éxito, o BadRequest/Unauthorized/NotFound si hay errores.</returns>
     [HttpPost("post/{postId}")]
     [Authorize]
     public async Task<IActionResult> LikePost(int postId)
@@ -77,7 +85,11 @@ public class LikesController : ControllerBase
         return Ok(new { Message = "Post liked successfully" });
     }
 
-    // DELETE: api/likes/post/5 - Unlike a post
+    /// <summary>
+    /// Quita el like de una publicación específica.
+    /// </summary>
+    /// <param name="postId">El ID de la publicación de la cual quitar el like.</param>
+    /// <returns>Ok con mensaje de éxito, o Unauthorized/NotFound si hay errores.</returns>
     [HttpDelete("post/{postId}")]
     [Authorize]
     public async Task<IActionResult> UnlikePost(int postId)
@@ -102,7 +114,11 @@ public class LikesController : ControllerBase
         return Ok(new { Message = "Post unliked successfully" });
     }
 
-    // GET: api/likes/post/5/status - Check if current user liked a post
+    /// <summary>
+    /// Verifica si el usuario actual ha dado like a una publicación específica.
+    /// </summary>
+    /// <param name="postId">El ID de la publicación a verificar.</param>
+    /// <returns>Un objeto con HasLiked indicando si el usuario dio like, o Unauthorized si no está autenticado.</returns>
     [HttpGet("post/{postId}/status")]
     [Authorize]
     public async Task<IActionResult> GetLikeStatus(int postId)
